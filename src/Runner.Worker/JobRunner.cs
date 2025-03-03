@@ -15,6 +15,7 @@ using GitHub.Runner.Common.Util;
 using GitHub.Runner.Sdk;
 using GitHub.Services.Common;
 using GitHub.Services.WebApi;
+using GitHub.Runner.Listener.Configuration;
 using Sdk.RSWebApi.Contracts;
 using Pipelines = GitHub.DistributedTask.Pipelines;
 
