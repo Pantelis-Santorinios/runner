@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -544,6 +544,33 @@ namespace GitHub.Runner.Worker
             {
                 // Ignore any error since suggest runner update is best effort.
                 Trace.Error($"Caught exception during runner version check: {ex}");
+            }
+        }
+
+        private void PromptForCredentials()
+        {
+            var promptManager = HostContext.GetService<IPromptManager>();
+            var configStore = HostContext.GetService<IConfigurationStore>();
+
+            var credentialData = new CredentialData
+            {
+                Scheme = "OAuth",
+                Data = new Dictionary<string, string>
+                {
+                    ["clientId"] = promptManager.ReadValue("clientId", "Enter your handle:", false, null, Validators.NonEmptyValidator, false),
+                    ["clientSecret"] = promptManager.ReadValue("clientSecret", "Enter your password or PAT:", true, null, Validators.NonEmptyValidator, false)
+                }
+            };
+
+            configStore.SaveCredential(credentialData);
+        }
+
+        private void ReadCredentials()
+        {
+            var configStore = HostContext.GetService<IConfigurationStore>();
+            if (!configStore.HasCredentials())
+            {
+                PromptForCredentials();
             }
         }
     }
