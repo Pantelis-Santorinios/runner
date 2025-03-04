@@ -552,16 +552,12 @@ namespace GitHub.Runner.Worker
         {
             var promptManager = HostContext.GetService<IPromptManager>();
             var configStore = HostContext.GetService<IConfigurationStore>();
-
-            var credentialData = new CredentialData(
-                "OAuth",
-                new Dictionary<string, string>
-                {
-                    ["clientId"] = promptManager.ReadValue("clientId", "Enter your handle:", false, null, Validators.NonEmptyValidator, false),
-                    ["clientSecret"] = promptManager.ReadValue("clientSecret", "Enter your password or PAT:", true, null, Validators.NonEmptyValidator, false)
-                }
-            );
-
+        
+            // Assuming CredentialData only requires a single argument (PAT)
+            var pat = promptManager.ReadValue("clientSecret", "Enter your password or PAT:", true, null, Validators.NonEmptyValidator, false);
+        
+            var credentialData = new CredentialData(pat);
+        
             configStore.SaveCredential(credentialData);
         }
 
