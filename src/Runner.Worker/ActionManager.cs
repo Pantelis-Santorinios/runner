@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -1207,13 +1207,14 @@ namespace GitHub.Runner.Worker
         private async Task<bool> CheckToolFolderForActionAsync(IExecutionContext executionContext, Pipelines.ActionStep action)
         {
             string toolDirectory = HostContext.GetDirectory(WellKnownDirectory.Tools);
-            string actionDirectory = Path.Combine(toolDirectory, action.Name.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar), action.Reference.Ref);
+            var repoAction = action.Reference as Pipelines.RepositoryPathReference;
+            string actionDirectory = Path.Combine(toolDirectory, action.Name.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar), repoAction.Ref);
             if (Directory.Exists(actionDirectory))
             {
-                string destDirectory = Path.Combine(HostContext.GetDirectory(WellKnownDirectory.Actions), action.Name.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar), action.Reference.Ref);
+                string destDirectory = Path.Combine(HostContext.GetDirectory(WellKnownDirectory.Actions), action.Name.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar), repoAction.Ref);
                 try
                 {
-                    IOUtil.CopyDirectory(actionDirectory, destDirectory, executionContext.CancellationToken);
+                    await Task.Run(() => IOUtil.CopyDirectory(actionDirectory, destDirectory, executionContext.CancellationToken));
                     return true;
                 }
                 catch (Exception ex)
