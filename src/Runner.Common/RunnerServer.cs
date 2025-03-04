@@ -1,4 +1,4 @@
-﻿using GitHub.DistributedTask.WebApi;
+using GitHub.DistributedTask.WebApi;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -330,7 +330,7 @@ namespace GitHub.Runner.Common
 
         public async Task DownloadActionIfNotExists(string actionName, Uri actionUri)
         {
-            if (!ActionExistsInToolDirectory(actionName))
+            if (!await Task.Run(() => ActionExistsInToolDirectory(actionName)))
             {
                 // Logic to download the action from the provided URI
                 // This is a placeholder and should be replaced with actual download logic

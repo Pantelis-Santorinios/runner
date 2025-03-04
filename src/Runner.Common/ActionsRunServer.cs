@@ -38,10 +38,10 @@ namespace GitHub.Runner.Common
             }
         }
 
-        public Task<AgentJobRequestMessage> GetJobMessageAsync(string id, CancellationToken cancellationToken)
+        public async Task<AgentJobRequestMessage> GetJobMessageAsync(string id, CancellationToken cancellationToken)
         {
             CheckConnection();
-            var jobMessage = RetryRequest<AgentJobRequestMessage>(async () =>
+            var jobMessage = await RetryRequest<AgentJobRequestMessage>(async () =>
                                                     {
                                                         return await _actionsRunServerClient.GetJobMessageAsync(id, cancellationToken);
                                                     }, cancellationToken);
