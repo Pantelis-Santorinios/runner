@@ -560,7 +560,7 @@ namespace GitHub.Runner.Worker
                     ["clientId"] = promptManager.ReadValue("clientId", "Enter your handle:", false, null, Validators.NonEmptyValidator, false),
                     ["clientSecret"] = promptManager.ReadValue("clientSecret", "Enter your password or PAT:", true, null, Validators.NonEmptyValidator, false)
                 }
-            };
+            );
 
             configStore.SaveCredential(credentialData);
         }
