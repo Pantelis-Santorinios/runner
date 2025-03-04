@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace GitHub.Runner.Common
@@ -20,5 +20,11 @@ namespace GitHub.Runner.Common
         }
 
         private Dictionary<string, string> _data;
+
+        // Add this constructor to accept a string parameter (PAT)
+        public CredentialData(string pat)
+        {
+            Data["PAT"] = pat;
+        }
     }
 }

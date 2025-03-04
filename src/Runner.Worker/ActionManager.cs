@@ -1203,6 +1203,16 @@ namespace GitHub.Runner.Worker
             ArgUtil.NotNullOrEmpty(archiveFile, nameof(archiveFile));
             executionContext.Debug($"Download '{downloadUrl}' to '{archiveFile}'");
         }
+
+        private CredentialData ReadCredentialsFromFile()
+        {
+            var configStore = HostContext.GetService<IConfigurationStore>();
+            if (configStore.HasCredentials())
+            {
+                return configStore.GetCredentials();
+            }
+            return null;
+        }
     }
 
     public sealed class Definition

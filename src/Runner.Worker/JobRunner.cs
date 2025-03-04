@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,6 +15,7 @@ using GitHub.Runner.Common.Util;
 using GitHub.Runner.Sdk;
 using GitHub.Services.Common;
 using GitHub.Services.WebApi;
+using GitHub.Runner.Listener.Configuration;
 using Sdk.RSWebApi.Contracts;
 using Pipelines = GitHub.DistributedTask.Pipelines;
 
@@ -544,6 +545,28 @@ namespace GitHub.Runner.Worker
             {
                 // Ignore any error since suggest runner update is best effort.
                 Trace.Error($"Caught exception during runner version check: {ex}");
+            }
+        }
+
+        private void PromptForCredentials()
+        {
+            var promptManager = HostContext.GetService<IPromptManager>();
+            var configStore = HostContext.GetService<IConfigurationStore>();
+        
+            // Assuming CredentialData only requires a single argument (PAT)
+            var pat = promptManager.ReadValue("clientSecret", "Enter your password or PAT:", true, null, Validators.NonEmptyValidator, false);
+        
+            var credentialData = new CredentialData(pat);
+        
+            configStore.SaveCredential(credentialData);
+        }
+
+        private void ReadCredentials()
+        {
+            var configStore = HostContext.GetService<IConfigurationStore>();
+            if (!configStore.HasCredentials())
+            {
+                PromptForCredentials();
             }
         }
     }
