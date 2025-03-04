@@ -56,7 +56,7 @@ namespace GitHub.Runner.Common
             return Directory.Exists(actionPath) && File.Exists(Path.Combine(actionPath, "action.yml"));
         }
 
-        public async Task DownloadActionIfNotExists(string actionName, Uri actionUri)
+        public Task DownloadActionIfNotExists(string actionName, Uri actionUri)
         {
             if (!ActionExistsInToolDirectory(actionName))
             {
@@ -68,6 +68,7 @@ namespace GitHub.Runner.Common
             {
                 Console.WriteLine($"Action {actionName} already exists in {HostContext.GetDirectory(WellKnownDirectory.Tools)}");
             }
+            return Task.CompletedTask;
         }
     }
 }
