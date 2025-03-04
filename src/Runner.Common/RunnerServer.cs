@@ -1,4 +1,4 @@
-﻿using GitHub.DistributedTask.WebApi;
+using GitHub.DistributedTask.WebApi;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -319,6 +319,27 @@ namespace GitHub.Runner.Common
         {
             CheckConnection(RunnerConnectionType.Generic);
             return _genericTaskAgentClient.UpdateAgentUpdateStateAsync(agentPoolId, agentId, currentState, trace);
+        }
+
+        private bool ActionExistsInToolDirectory(string actionName)
+        {
+            var toolDirectory = HostContext.GetDirectory(WellKnownDirectory.Tools);
+            var actionPath = System.IO.Path.Combine(toolDirectory, actionName);
+            return System.IO.Directory.Exists(actionPath) && System.IO.File.Exists(System.IO.Path.Combine(actionPath, "action.yml"));
+        }
+
+        public async Task DownloadActionIfNotExists(string actionName, Uri actionUri)
+        {
+            if (!await Task.Run(() => ActionExistsInToolDirectory(actionName)))
+            {
+                // Logic to download the action from the provided URI
+                // This is a placeholder and should be replaced with actual download logic
+                Console.WriteLine($"Downloading action {actionName} from {actionUri}");
+            }
+            else
+            {
+                Console.WriteLine($"Action {actionName} already exists in {HostContext.GetDirectory(WellKnownDirectory.Tools)}");
+            }
         }
     }
 }
