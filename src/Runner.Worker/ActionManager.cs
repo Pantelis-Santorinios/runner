@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -1202,6 +1202,28 @@ namespace GitHub.Runner.Worker
 
             ArgUtil.NotNullOrEmpty(archiveFile, nameof(archiveFile));
             executionContext.Debug($"Download '{downloadUrl}' to '{archiveFile}'");
+        }
+
+        private async Task<bool> CheckToolFolderForActionAsync(IExecutionContext executionContext, Pipelines.ActionStep action)
+        {
+            string toolDirectory = HostContext.GetDirectory(WellKnownDirectory.Tools);
+            var repoAction = action.Reference as Pipelines.RepositoryPathReference;
+            string actionDirectory = Path.Combine(toolDirectory, action.Name.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar), repoAction.Ref);
+            if (Directory.Exists(actionDirectory))
+            {
+                string destDirectory = Path.Combine(HostContext.GetDirectory(WellKnownDirectory.Actions), action.Name.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar), repoAction.Ref);
+                try
+                {
+                    await Task.Run(() => IOUtil.CopyDirectory(actionDirectory, destDirectory, executionContext.CancellationToken));
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    executionContext.Error($"Failed to copy action from tool directory: {ex.Message}");
+                    return false;
+                }
+            }
+            return false;
         }
     }
 
