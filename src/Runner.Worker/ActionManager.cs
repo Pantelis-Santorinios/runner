@@ -1203,6 +1203,27 @@ namespace GitHub.Runner.Worker
             ArgUtil.NotNullOrEmpty(archiveFile, nameof(archiveFile));
             executionContext.Debug($"Download '{downloadUrl}' to '{archiveFile}'");
         }
+
+        private async Task<bool> CheckToolFolderForActionAsync(IExecutionContext executionContext, Pipelines.ActionStep action)
+        {
+            string toolDirectory = HostContext.GetDirectory(WellKnownDirectory.Tools);
+            string actionDirectory = Path.Combine(toolDirectory, action.Name.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar), action.Reference.Ref);
+            if (Directory.Exists(actionDirectory))
+            {
+                string destDirectory = Path.Combine(HostContext.GetDirectory(WellKnownDirectory.Actions), action.Name.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar), action.Reference.Ref);
+                try
+                {
+                    IOUtil.CopyDirectory(actionDirectory, destDirectory, executionContext.CancellationToken);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    executionContext.Error($"Failed to copy action from tool directory: {ex.Message}");
+                    return false;
+                }
+            }
+            return false;
+        }
     }
 
     public sealed class Definition
