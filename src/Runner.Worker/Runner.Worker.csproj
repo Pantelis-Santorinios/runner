@@ -16,6 +16,7 @@
     <ProjectReference Include="..\Sdk\Sdk.csproj" />
     <ProjectReference Include="..\Runner.Common\Runner.Common.csproj" />
     <ProjectReference Include="..\Runner.Sdk\Runner.Sdk.csproj" />
+    <ProjectReference Include="..\Runner.Listener\Runner.Listener.csproj" />
   </ItemGroup>
 
   <ItemGroup>
