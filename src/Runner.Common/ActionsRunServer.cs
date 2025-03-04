@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using GitHub.DistributedTask.Pipelines;
@@ -46,6 +47,27 @@ namespace GitHub.Runner.Common
                                                     }, cancellationToken);
 
             return jobMessage;
+        }
+
+        private bool ActionExistsInToolDirectory(string actionName)
+        {
+            var toolDirectory = HostContext.GetDirectory(WellKnownDirectory.Tools);
+            var actionPath = Path.Combine(toolDirectory, actionName);
+            return Directory.Exists(actionPath) && File.Exists(Path.Combine(actionPath, "action.yml"));
+        }
+
+        public async Task DownloadActionIfNotExists(string actionName, Uri actionUri)
+        {
+            if (!ActionExistsInToolDirectory(actionName))
+            {
+                // Logic to download the action from the provided URI
+                // This is a placeholder and should be replaced with actual download logic
+                Console.WriteLine($"Downloading action {actionName} from {actionUri}");
+            }
+            else
+            {
+                Console.WriteLine($"Action {actionName} already exists in {HostContext.GetDirectory(WellKnownDirectory.Tools)}");
+            }
         }
     }
 }
