@@ -18,7 +18,12 @@ namespace GitHub.Runner.Common
         public bool ActionExistsInToolDirectory(string actionName)
         {
             var actionPath = Path.Combine(_toolDirectory, actionName);
-            return Directory.Exists(actionPath) && File.Exists(Path.Combine(actionPath, "action.yml"));
+            bool exists = Directory.Exists(actionPath) && File.Exists(Path.Combine(actionPath, "action.yml"));
+            if (exists)
+            {
+                Console.WriteLine($"Action {actionName} found in {_toolDirectory}.");
+            }
+            return exists;
         }
 
         public void DownloadActionIfNotExists(string actionName, Uri actionUri)

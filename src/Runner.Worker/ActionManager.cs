@@ -1215,6 +1215,7 @@ namespace GitHub.Runner.Worker
                 try
                 {
                     await Task.Run(() => IOUtil.CopyDirectory(actionDirectory, destDirectory, executionContext.CancellationToken));
+                    executionContext.Output($"Action '{action.Name}' found in the '_tool' directory and copied to '{destDirectory}'.");
                     return true;
                 }
                 catch (Exception ex)

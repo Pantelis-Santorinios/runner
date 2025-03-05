@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
@@ -2471,7 +2472,7 @@ runs:
             _hc.EnqueueInstance<IProcessInvoker>(pInvoker5);
 
             // Instance to test.
-            _actionManager = new ActionManager();
+            _actionManager = new ActionManager(_hc);
             _actionManager.Initialize(_hc);
 
             Environment.SetEnvironmentVariable("GITHUB_ACTION_DOWNLOAD_NO_BACKOFF", "1");
