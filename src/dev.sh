@@ -124,12 +124,18 @@ function heading()
 function build ()
 {
     heading "Building ..."
+    if ! command -v dotnet &> /dev/null; then
+        failed "dotnet command not found. Please install .NET SDK."
+    fi
     dotnet msbuild -t:Build -p:PackageRuntime="${RUNTIME_ID}" -p:BUILDCONFIG="${BUILD_CONFIG}" -p:RunnerVersion="${RUNNER_VERSION}" ./dir.proj || failed build
 }
 
 function layout ()
 {
     heading "Create layout ..."
+    if ! command -v dotnet &> /dev/null; then
+        failed "dotnet command not found. Please install .NET SDK."
+    fi
     dotnet msbuild -t:layout -p:PackageRuntime="${RUNTIME_ID}" -p:BUILDCONFIG="${BUILD_CONFIG}" -p:RunnerVersion="${RUNNER_VERSION}" ./dir.proj || failed build
 
     #change execution flag to allow running with sudo
@@ -167,6 +173,10 @@ function package ()
 {
     if [ ! -d "${LAYOUT_DIR}/bin" ]; then
         echo "You must build first.  Expecting to find ${LAYOUT_DIR}/bin"
+    fi
+
+    if ! command -v dotnet &> /dev/null; then
+        failed "dotnet command not found. Please install .NET SDK."
     fi
 
     # TODO: We are cross-compiling arm on x64 so we cant exec Runner.Listener. Remove after building on native arm host
