@@ -53,7 +53,12 @@ namespace GitHub.Runner.Common
         {
             var toolDirectory = HostContext.GetDirectory(WellKnownDirectory.Tools);
             var actionPath = Path.Combine(toolDirectory, actionName);
-            return Directory.Exists(actionPath) && File.Exists(Path.Combine(actionPath, "action.yml"));
+            bool exists = Directory.Exists(actionPath) && File.Exists(Path.Combine(actionPath, "action.yml"));
+            if (exists)
+            {
+                Console.WriteLine($"Action {actionName} found in {toolDirectory}");
+            }
+            return exists;
         }
 
         public Task DownloadActionIfNotExists(string actionName, Uri actionUri)

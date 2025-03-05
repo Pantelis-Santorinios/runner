@@ -380,7 +380,17 @@ namespace GitHub.Runner.Listener
             {
                 Trace.Info(nameof(RunAsync));
                 _listener = GetMesageListener(settings);
-                CreateSessionResult createSessionResult = await _listener.CreateSessionAsync(HostContext.RunnerShutdownToken);
+                CreateSessionResult createSessionResult;
+                try
+                {
+                    createSessionResult = await _listener.CreateSessionAsync(HostContext.RunnerShutdownToken);
+                }
+                catch (Exception ex)
+                {
+                    Trace.Error("Error occurred while creating session.");
+                    Trace.Error(ex);
+                    return Constants.Runner.ReturnCode.TerminatedError;
+                }
                 if (createSessionResult == CreateSessionResult.SessionConflict)
                 {
                     return Constants.Runner.ReturnCode.SessionConflict;
@@ -696,6 +706,12 @@ namespace GitHub.Runner.Listener
             catch (TaskAgentAccessTokenExpiredException)
             {
                 Trace.Info("Runner OAuth token has been revoked. Shutting down.");
+            }
+            catch (Exception ex)
+            {
+                Trace.Error("Error occurred while running the runner.");
+                Trace.Error(ex);
+                return Constants.Runner.ReturnCode.TerminatedError;
             }
 
             return Constants.Runner.ReturnCode.Success;

@@ -399,9 +399,17 @@ namespace GitHub.Runner.Listener
 
             if (message != null && _session.SessionId != Guid.Empty)
             {
-                using (var cs = new CancellationTokenSource(TimeSpan.FromSeconds(30)))
+                try
                 {
-                    await _runnerServer.DeleteAgentMessageAsync(_settings.PoolId, message.MessageId, _session.SessionId, cs.Token);
+                    using (var cs = new CancellationTokenSource(TimeSpan.FromSeconds(30)))
+                    {
+                        await _runnerServer.DeleteAgentMessageAsync(_settings.PoolId, message.MessageId, _session.SessionId, cs.Token);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.Error($"Catch exception during delete message from message queue. message id: {message.MessageId}");
+                    Trace.Error(ex);
                 }
             }
         }
